@@ -22,10 +22,11 @@
 ## @param LinkTitle:title=Link Title|type=boolean|desc=Select to turn the titles of the child pages into links to those pages (Show Title must be selected).|default=false
 ## @param PageSeparator:title=Page Separator|type=boolean|desc=Separate pages with horizontal ruler.|default=false
 ## @param SplitPages:title=Split Pages|type=boolean|desc=Split pages marker for PDF export will be inserted. Page separator will not be shown when exporting.|default=false
+## @param HeaderSize:title=Header Size|type=enum|enumValues=h1,h2,h3,h4,h5,h6|default=h1|desc=Select the header size of included page titles.
+## @param Collapsible:title=Collapsible|type=boolean|desc=Should the included pages be collapsible?|default=false
 ## @param FilterLabel:title=Filter on Page Label|type=string|desc=Include only subpages with the specified label.
 ## @param Order:title=Order|type=enum|enumValues=Nav Order,Reverse Nav Order,Alphabetical,Reverse Alphabetical,Create Date,Reverse Create Date|default=nav order|desc=In what order should the child pages be displayed? Nav Order refers to the order of the child pages in the page tree. Reverse Nav Order simply reverses that.
 ## @param Limit:title=Limit|type=int|default=|desc=The number of pages to include. If number is not specified all pages will be included.
-## @param HeadingElement:title=HeadingElement|type=string|default=h1|desc=The HTML element to be used for the page titles, defaults to H1
 
 #set( $containerManagerClass=$content.class.forName('com.atlassian.spring.container.ContainerManager') )
 #set( $getInstanceMethod=$containerManagerClass.getDeclaredMethod('getInstance',null) )
@@ -105,14 +106,20 @@
     #else
         #set( $count = $count + 1 )
         #set( $include = "" )
+        #if ( $paramCollapsible == true )
+            #set( $include = $include + '<ac:structured-macro ac:name="expand">' )
+            #set( $include = $include + '<ac:parameter ac:name="title">' + $child.getTitle() + '</ac:parameter>' )
+            #set( $include = $include + '<ac:rich-text-body>' )
+            #set( $include = $include + '<p>' )
+        #end
         #set( $include = $include + '<div class="included-child-page">' )
 
         ## Show title and links.
         #if( $paramShowTitle == true )
             #if( $paramLinkTitle == true )
-                #set( $include = $include + '<'+$paramHeadingElement+' class="included-child-page-title"><a href="' + $child.getUrlPath() + '">' + $child.getTitle() + '</a></'+$paramHeadingElement+'>' )
+                #set( $include = $include + '<'+$paramHeaderSize+' class="included-child-page-title"><a href="' + $child.getUrlPath() + '">' + $child.getTitle() + '</a></'+$paramHeaderSize+'>' )
             #else
-                #set( $include = $include + '<'+$paramHeadingElement+' class="included-child-page-title">' + $child.getTitle() + '</'+$paramHeadingElement+'>' )
+                #set( $include = $include + '<'+$paramHeaderSize+' class="included-child-page-title">' + $child.getTitle() + '</'+$paramHeaderSize+'>' )
             #end
         #end
 
@@ -127,6 +134,12 @@
             #set( $include = $include + '</ac:structured-macro>' )
         #set( $include = $include + '</div>' )
         #set( $include = $include + '</div>' )
+
+        #if ( $paramCollapsible == true )
+            #set( $include = $include + '</p>' )
+            #set( $include = $include + '</ac:rich-text-body>' )
+            #set( $include = $include + '</ac:structured-macro>' )
+        #end
 
         ## Find out, whether we are in between pages or not.
         #set( $betweenPages = false )
