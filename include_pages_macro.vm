@@ -16,6 +16,10 @@
 ## Date updated: 29/4/2016
 ## Added: allow setting the html element to use for page titles
 ##
+## Updated by: Kim Poulsen
+## Date updated: 28/11/2016
+## Added: expand option and made header selection an enum to let non-HTML savvy people select a size easier.
+##
 
 ## @param ParentPage:title=Parent Page Title|type=confluence-content|desc=Include children of a specific parent page. If no page is defined, current page will be selected.
 ## @param ShowTitle:title=Show Title|type=boolean|desc=Deselect to remove the title of the child page.|default=true
